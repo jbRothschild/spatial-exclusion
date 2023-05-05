@@ -99,7 +99,7 @@ axes.linewidth      : 1.0     # edge linewidth
 axes.grid           : False   # display grid or not
 axes.titlesize      : 10   # fontsize of the axes title
 axes.titlepad       : 15   # vertical offset of the axes title
-axes.labelsize      : 12  # fontsize of the x any y labels
+axes.labelsize      : 10  # fontsize of the x any y labels
 axes.labelpad       : 8.0     # space between label and axis
 #axes.labelweight    : normal  # weight of the x and y labels
 #axes.axisbelow      : False   # whether axis gridlines and ticks are below
@@ -120,7 +120,7 @@ xtick.major.width    : 0.75    # major tick width in points
 xtick.minor.width    : 0.75    # minor tick width in points
 xtick.major.pad      : 5      # distance to major tick label in points
 xtick.minor.pad      : 5      # distance to the minor tick label in points
-xtick.labelsize      : 12 # fontsize of the tick labels
+xtick.labelsize      : 10 # fontsize of the tick labels
 #xtick.direction      : in     # direction: in, out, or inout
 
 ytick.major.size     : 6      # major tick size in points

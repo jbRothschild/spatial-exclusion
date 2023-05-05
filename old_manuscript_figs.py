@@ -1,4 +1,4 @@
-from python_src.first_passage import MoranFPT, Spatial, SpatInv
+from python_src_old.first_passage import MoranFPT, Spatial, SpatInv
 import os
 from pathlib import Path
 import matplotlib.pyplot as plt
@@ -7,13 +7,13 @@ import numpy as np
 import scipy as sp
 from matplotlib.lines import Line2D
 from matplotlib.ticker import NullFormatter
-# from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 
-def spatial_vs_moran(N, times, cmap_name, filename, model, ME=False):
+def spatial_vs_moran(N, times, cmap_name, filename, model):
     r1 = 1.0
     r2 = 1.0
-    marker = 'o'
+    # marker = 'o'
     cmap = matplotlib.cm.get_cmap(cmap_name)
     colors = [cmap(nbr) for nbr in np.linspace(0.0, 0.8, num=len(N))]
     linestyle = [':', '-', '--']
@@ -25,11 +25,11 @@ def spatial_vs_moran(N, times, cmap_name, filename, model, ME=False):
 
     # Fig1A : P_absorbing
     # fig1, (ax1, ax2) = plt.subplots(nrows=2, sharex=True, figsize=(3.4, 5.0))
-    # plt.subplots_adjust(wspace=0, hspace=0)
+    plt.subplots_adjust(wspace=0, hspace=0)
     fig1, ax1 = plt.subplots(figsize=(3.4, 2.5))
     ax1.set(title=r"",
             xlabel=r"Fractional abundance, $f$",
-            ylabel=r"Probability fixation, $P_1(f)$")
+            ylabel=r"Probability fixation, $P_N(f)$")
     """
     legend = ['spatial (ME)', 'spatial (FP)', 'moran (FP)']
     custom_lines = [
@@ -45,13 +45,13 @@ def spatial_vs_moran(N, times, cmap_name, filename, model, ME=False):
             xlabel=r"Fractional abundance, $f$",
             ylabel=r"MFPT, $\tau(f)$")
 
-    # axins2 = inset_axes(ax2, width="35%", height="35%", borderpad=1)
+    axins2 = inset_axes(ax2, width="35%", height="35%", borderpad=1)
 
     # Fig1C : MFPT as function of N
     fig3, ax3 = plt.subplots(figsize=(3.4, 2.5))
     ax3.set(title=r"",
             xlabel=r"Total population size, $N$",
-            ylabel=r"MFPT, $\tau(x_{\mathrm{max}}=0.5)$")
+            ylabel=r"MFPT, $\tau(x_{\mathrm{max}})$")
 
     moran = []
     space = []
@@ -79,9 +79,8 @@ def spatial_vs_moran(N, times, cmap_name, filename, model, ME=False):
         X, FP_prob_space = space[i].FP_prob()
         ax1.plot(X, FP_prob_space, linestyle=linestyle[1], color=colors[i],
                  zorder=i)
-        if ME:
-            ax1.scatter(x, ME_prob_space, color=colors[i], marker=marker,
-                        s=12, edgecolors='k', linewidth=1, zorder=i+.5)
+        # ax1.scatter(x, ME_prob_space, color=colors[i], marker=marker,
+        #            s=12, edgecolors='k', linewidth=1, zorder=i+.5)
 
         # Fig 1 B
         x = []
@@ -99,11 +98,10 @@ def spatial_vs_moran(N, times, cmap_name, filename, model, ME=False):
         X, FP_mfpt_space = space[i].FP_mfpt()
         ax2.plot(X, FP_mfpt_space, linestyle=linestyle[1], color=colors[i],
                  zorder=i)
-        # axins2.plot(X, FP_mfpt_space, linestyle=linestyle[1],
-        #            color=colors[i], zorder=i)
-        if ME:
-            ax2.scatter(x, ME_mfpt_space, color=colors[i], marker=marker,
-                        s=12, edgecolors='k', linewidth=1, zorder=i+.5)
+        axins2.plot(X, FP_mfpt_space, linestyle=linestyle[1], color=colors[i],
+                    zorder=i)
+        # ax2.scatter(x, ME_mfpt_space, color=colors[i], marker=marker,
+        #            s=12, edgecolors='k', linewidth=1, zorder=i+.5)
 
         # Fig 1 C
         prob, mfpt = space[i].probability_mfpt(space[i].nmax)
@@ -130,10 +128,9 @@ def spatial_vs_moran(N, times, cmap_name, filename, model, ME=False):
     ax3.plot(N_func, FP_mfpt_moran_N, color='k', linestyle=linestyle[0])
     ax3.plot(N_func, FP_mfpt_space_N, color='k')
 
-    if ME:
-        ax3.scatter(N, ME_mfpt_space_N, label=r'ME Homog.', marker=marker,
-                    color=colors[0: len(N)], s=12, edgecolors='k', linewidth=1,
-                    zorder=i+.5)
+    # ax3.scatter(N, ME_mfpt_space_N, label=r'ME Homog.', marker=marker,
+    #            color=colors[0: len(N)], s=12, edgecolors='k', linewidth=1,
+    #            zorder=i+.5)
 
     # figure limits and legends
     cl = ax1.legend(col_lines, col_label, loc='lower right', title=r'$N$')
@@ -145,13 +142,12 @@ def spatial_vs_moran(N, times, cmap_name, filename, model, ME=False):
     ax2.set_ylim(0.1, 1000)
     ax2.set_xlim([0.0, 1.0])
     ax2.set_yscale('log')
-    """
-    axins2.set_ylim(1., 10)
-    axins2.set_xlim([0.4, 0.6])
-    axins2.set_yscale('log')
-    axins2.xaxis.set_minor_formatter(NullFormatter())
-    axins2.yaxis.set_minor_formatter(NullFormatter())
-    """
+
+    #axins2.set_ylim(1., 10)
+    #axins2.set_xlim([0.4, 0.6])
+    #axins2.set_yscale('log')
+    #axins2.xaxis.set_minor_formatter(NullFormatter())
+    #axins2.yaxis.set_minor_formatter(NullFormatter())
 
     # ax3.legend(custom_lines, legend, title=r'Model')
     ax3.set_yscale('log')
@@ -171,7 +167,7 @@ def spatial_vs_moran(N, times, cmap_name, filename, model, ME=False):
     return 0
 
 
-def fitness_spatial(s, N, times, cmap_name, filename, model, ME=False):
+def fitness_spatial(s, N, times, cmap_name, filename, model):
 
     marker = 'o'
     cmap = matplotlib.cm.get_cmap(cmap_name)
@@ -184,11 +180,11 @@ def fitness_spatial(s, N, times, cmap_name, filename, model, ME=False):
 
     # Fig2A : P_absorbing
     # fig1, (ax1, ax2) = plt.subplots(nrows=2, sharex=True, figsize=(3.4, 5.0))
-    # plt.subplots_adjust(wspace=0, hspace=0.0)
+    plt.subplots_adjust(wspace=0, hspace=0.0)
     fig1, ax1 = plt.subplots(figsize=(3.4, 2.5))
     ax1.set(title=r"",
             xlabel=r"Fractional abundance, $f$",
-            ylabel=r"Probability fixation, $P_1(f)$")
+            ylabel=r"Probability fixation, $P_N(f)$")
 
     # Fig2B : MFPT function of x
     fig2, ax2 = plt.subplots(figsize=(3.4, 2.5))
@@ -231,9 +227,8 @@ def fitness_spatial(s, N, times, cmap_name, filename, model, ME=False):
                  zorder=0)
         ax1.plot(X, FP_prob_space, linestyle=linestyle[1], color=colors[i],
                  zorder=i)
-        if ME:
-            ax1.scatter(x, ME_prob_space, color=colors[i], marker=marker,
-                        s=12, edgecolors='k', linewidth=1, zorder=i+.5)
+        # ax1.scatter(x, ME_prob_space, color=colors[i], marker=marker,
+        #            s=12, edgecolors='k', linewidth=1, zorder=i+.5)
 
         # Fig 2 D
         x = []
@@ -251,19 +246,18 @@ def fitness_spatial(s, N, times, cmap_name, filename, model, ME=False):
         X, FP_mfpt_space = space[i].FP_mfpt()
         ax2.plot(X, FP_mfpt_space, linestyle=linestyle[1], color=colors[i],
                  zorder=i)
-        if ME:
-            ax2.scatter(x, ME_mfpt_space, color=colors[i], marker=marker,
-                        s=12, edgecolors='k', linewidth=1, zorder=i + .5)
+        # ax2.scatter(x, ME_mfpt_space, color=colors[i], marker=marker,
+        #            s=12, edgecolors='k', linewidth=1, zorder=i + .5)
 
     # deterministic approximation times
     S = 100
     x_max = 1 / (1 + np.sqrt(S))
     x_det = np.linspace(x_max, 1.0, 1000)
     t_det = - (np.log(np.abs((S - 1) * x_det**2 + 2 * x_det - 1)) - np.log(S))
-    ax2.plot(x_det, t_det, linestyle=linestyle[2], color='k', zorder=i+1)
+    #ax2.plot(x_det, t_det, linestyle=linestyle[2], color='k', zorder=i+1)
     x_det = np.linspace(0.0, x_max, 1000)
     t_det2 = - (sp.log((S - 1) * x_det**2 + 2 * x_det - 1) - sp.log(-1))
-    ax2.plot(x_det, t_det2, linestyle=linestyle[2], color='k', zorder=i+1)
+    #ax2.plot(x_det, t_det2, linestyle=linestyle[2], color='k', zorder=i+1)
 
     # Fig 1C: MFPT as a function of N at x_max
     N_func = np.linspace(10, 1000, 100)
@@ -278,7 +272,6 @@ def fitness_spatial(s, N, times, cmap_name, filename, model, ME=False):
 
     # figure limits and legends
     # legend
-    """
     legend = ['spatial (ME)', 'spatial (FP)', 'moran (FP)']
     custom_lines = [
         Line2D([0], [0], markerfacecolor='dimgray', linestyle='None',
@@ -286,7 +279,6 @@ def fitness_spatial(s, N, times, cmap_name, filename, model, ME=False):
         Line2D([0], [0], color='dimgray', linestyle=linestyle[1]),
         Line2D([0], [0], color='k', linestyle=linestyle[0])
         ]
-    """
 
     # limits
     ax1.set_xlim([0.00, 1.0])
@@ -304,12 +296,12 @@ def fitness_spatial(s, N, times, cmap_name, filename, model, ME=False):
     ax4.set_xscale('log')
     ax4.set_ylim([1.0, 100])
     ax4.set_xlim([np.min(N_func), np.max(N_func)])
-    # c2 = ax4.legend(col_lines, col_label, loc='upper right', title=r'$s$')
-    # custom_lines.pop(0)
-    # legend.pop(0)
+    c2 = ax4.legend(col_lines, col_label, loc='upper right', title=r'$s$')
+    custom_lines.pop(0)
+    legend.pop(0)
     # ax4.legend(custom_lines, legend, title=r'Model', loc='upper left',
     #           framealpha=0.8)
-    # ax4.add_artist(c2)
+    ax4.add_artist(c2)
 
     # save figures
     fig1.savefig(filename + '_prob.pdf')
@@ -355,11 +347,11 @@ def asymptotics(s, cmap_name, filename, model):
 
     # Fig3A : potentials
     # fig1, (ax1, ax2) = plt.subplots(nrows=2, sharex=True, figsize=(3.4, 5.0))
-    # plt.subplots_adjust(wspace=0, hspace=0.0)
+    plt.subplots_adjust(wspace=0, hspace=0.0)
     fig1, ax1 = plt.subplots(figsize=(3.4, 2.5))
     ax1.set_xlim([0.0, 1.0])
     ax1.set(title=r"",
-            xlabel=r"Fractional abundance, $f$",
+            xlabel=r"$f$",
             ylabel=r"$U(f)$")
 
     # Fig3B : x_t as a function of N
@@ -385,8 +377,6 @@ def asymptotics(s, cmap_name, filename, model):
                                       / space[i].K * K),
                     marker='X', color=colors[i], s=20, edgecolors='k',
                     linewidth=1, zorder=i + .5)
-        x1, x2 = x_det(fit, 100.)
-        ax1.axvspan(x1, x2, alpha=0.2, color=colors[i])
 
         # Fig 3B
         x1, x2 = x_det(fit, N)
@@ -450,7 +440,6 @@ def asymptotics(s, cmap_name, filename, model):
         ]
     ax3.legend(custom_lines2, custom_label2)
     ax3.set_xlim([np.min(N), np.max(N)])
-    ax3.yaxis.set_minor_formatter(matplotlib.ticker.ScalarFormatter())
 
     fig1.savefig(filename + '_pot.tiff', dpi=300)
     fig1.savefig(filename + '_pot.pdf')
@@ -481,27 +470,27 @@ def invasion(s, N, cmap_name, filename, model):
     fig1, ax1 = plt.subplots(figsize=(3.4, 2.5))
     ax1.set(title=r"",
             xlabel=r"Total population size, $N$",
-            ylabel=r"Average invasion probability")
+            ylabel=r"Probability invasion succeeds")
 
     # Fig4B : MFPT function of x
     fig2, ax2 = plt.subplots(figsize=(3.4, 2.5))
     ax2.set(title=r"",
             xlabel=r"Total population size, $N$",
-            ylabel=r"Average invasion MFPT")
+            ylabel=r"MFPT successful invasion")
 
     fig3, ax3 = plt.subplots(figsize=(3.4, 2.5))
     ax3.set(title=r"",
             xlabel=r"Total population size, $N$",
-            ylabel=r"Averaged MFPT failure")
+            ylabel=r"MFPT failure")
 
     fig4, ax4 = plt.subplots(figsize=(3.4, 2.5))
     ax4.set(title=r"",
-            xlabel=r"Invasion location, $x$",
-            ylabel=r"Invasion probability")
+            xlabel=r"Fractional abundance, $f$",
+            ylabel=r"Probability invasion fixates")
 
     moran = [[] for fit in s]
     space = [[] for fit in s]
-
+    
     Nplot = 100
     for i, fit in enumerate(s):
         prob_loc = np.zeros(Nplot)
@@ -573,9 +562,13 @@ def invasion(s, N, cmap_name, filename, model):
     # limits
     ax1.set_xlim([np.min(N), np.max(N)])
     ax1.set_ylim([0.01, 1.1])
+    cl = ax1.legend(col_lines, col_label, loc='lower right', title=r'$s$',
+                    framealpha=0.8)
+    # ax1.legend(custom_lines, legend, title=r'Model', loc='upper right',
+    #           framealpha=0.8)
+    ax1.add_artist(cl)
     ax1.set_yscale('log')
     ax1.set_xscale('log')
-    ax1.yaxis.label.set_size(11)
     ax1.xaxis.set_minor_formatter(NullFormatter())
 
     # ax2.set_yscale('log')
@@ -591,14 +584,9 @@ def invasion(s, N, cmap_name, filename, model):
     ax3.xaxis.set_minor_formatter(NullFormatter())
 
     # ax4.set_yscale('log')
-    cl = ax4.legend(col_lines, col_label, loc='center right', title=r'$s$',
-                    framealpha=0.8)
-    # ax1.legend(custom_lines, legend, title=r'Model', loc='upper right',
-    #           framealpha=0.8)
-    ax4.add_artist(cl)
     ax4.set_xlim([0.0, 1.0])
     ax4.set_ylim([0.0001, 1.0])
-    # ax4.set_yscale('log')
+    ax4.set_yscale('log')
     # ax4.set_xscale('log')
     # ax4.xaxis.set_minor_formatter(NullFormatter())
 
@@ -619,29 +607,23 @@ if __name__ == '__main__':
 
     # mkdir
     dir = 'figures_manuscript'
-    # dir = 'figures_suppl'
     Path(dir).mkdir(parents=True, exist_ok=True)
-
-    # master equation scatter
-    flag_ME = False
 
     # for certain distribution functions
     times = np.linspace(0.0, 100.0, 10001)
 
-    # colormaps
-    cmap_name = 'viridis'
-    cmap_name1 = 'plasma'
     # Figure 1 : spatial vs moran
     N = [10, 100, 1000]
     fname1 = dir + os.sep + 'SvM'
-
-    spatial_vs_moran(N, times, cmap_name, fname1, Spatial, flag_ME)
+    cmap_name = 'viridis'
+    spatial_vs_moran(N, times, cmap_name, fname1, Spatial)
 
     # Figure 2 : fitness results
     s = [1., 10., 100.]
     K = 100
     fname2 = dir + os.sep + 'fit'
-    fitness_spatial(s, K, times, cmap_name1, fname2, Spatial, flag_ME)
+    cmap_name1 = 'plasma'
+    fitness_spatial(s, K, times, cmap_name1, fname2, Spatial)
 
     # Figure 3 : asymptotics
     s = [1., 10., 100.]
