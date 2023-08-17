@@ -51,7 +51,7 @@ def spatial_vs_moran(N, times, cmap_name, filename, model, ME=False):
     fig3, ax3 = plt.subplots(figsize=(3.4, 2.5))
     ax3.set(title=r"",
             xlabel=r"Total population size, $N$",
-            ylabel=r"MFPT, $\tau(x_{\mathrm{max}}=0.5)$")
+            ylabel=r"MFPT, $\tau(f_{\mathrm{eq}}=0.5)$")
 
     moran = []
     space = []
@@ -201,7 +201,7 @@ def fitness_spatial(s, N, times, cmap_name, filename, model, ME=False):
     fig4, ax4 = plt.subplots(figsize=(3.4, 2.5))
     ax4.set(title=r"",
             xlabel=r"Total population size, $N$",
-            ylabel=r"MFPT, $\tau(x_{\mathrm{max}})$")
+            ylabel=r"MFPT, $\tau(f_{\mathrm{eq}})$")
 
     moran = []
     space = []
@@ -428,7 +428,7 @@ def asymptotics(s, cmap_name, filename, model):
     #           [r'$x_{\mathrm{max}}$'], loc='upper right', framealpha=0.8)
     ax1.add_artist(cl)
 
-    custom_label1 = [r'$x_{\mathrm{max}}$', r'$x_t$']
+    custom_label1 = [r'$f_{\mathrm{eq}}$', r'$f_t$']
     custom_lines1 = [
         Line2D([0], [0], color='dimgray', linestyle=linestyle[0]),
         Line2D([0], [0], color='dimgray', linestyle=linestyle[2])
@@ -442,8 +442,8 @@ def asymptotics(s, cmap_name, filename, model):
 
     ax3.set_xscale('log')
     ax3.set_yscale('log')
-    custom_label2 = [r'$\tau(x_{\mathrm{max}})$',
-                     r'$\tau_{a}(x_{\mathrm{max}})$']
+    custom_label2 = [r'$\tau(f_{\mathrm{eq}})$',
+                     r'$\tau_{a}(f_{\mathrm{eq}})$']
     custom_lines2 = [
         Line2D([0], [0], color='dimgray', linestyle=linestyle[1]),
         Line2D([0], [0], color='dimgray', linestyle=linestyle[2])
@@ -530,10 +530,11 @@ def invasion(s, N, cmap_name, filename, model):
                 prob, mfpt = space[i][j].probability_mfpt(pos, K - (pos + 1))
                 if K == Nplot:
                     prob_loc[pos] = prob[0]
-                prob_tot += np.array(prob) / K
-                mfpt_tot += np.array(prob) * np.array(mfpt) / K
+                prob_tot += np.array( prob ) / K
+                mfpt_tot += np.array( prob ) * np.array(mfpt) / K  # which one is correct????
+                #mfpt_tot += np.array( mfpt ) / K
             ME_prob_space.append(prob_tot[0])
-            ME_fptS_space.append(mfpt_tot[0])
+            ME_fptS_space.append(mfpt_tot[0] / prob_tot[0])  # Changed this too
             ME_fptF_space.append(mfpt_tot[1] + mfpt_tot[2])
 
         ax1.plot(N, ME_prob_moran, color=colors[i], marker=marker[0],
